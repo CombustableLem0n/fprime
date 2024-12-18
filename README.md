@@ -1,6 +1,6 @@
-<p align="center">
-<img width="230em" src="docs/img/fprime-logo.png"><br/>
 <h2 align="center">A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework</h2>
+<p align="center"><br/>
+<img width="200em" src="docs/img/fprime-logo.svg"><br/>
 </p>
 
 #
@@ -17,7 +17,7 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about F' key features [here](https://nasa.github.io/fprime/features.html).
+Learn more about [F´ key features](https://nasa.github.io/fprime/features.html).
 
 
 ## System Requirements

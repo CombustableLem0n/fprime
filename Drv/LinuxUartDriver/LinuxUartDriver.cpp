@@ -35,10 +35,6 @@ LinuxUartDriver ::LinuxUartDriver(const char* const compName)
     : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0),  m_device("NOT_EXIST"), m_quitReadThread(false) {
 }
 
-void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
-  LinuxUartDriverComponentBase::init(instance);
-}
-
 bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
@@ -355,7 +351,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             status = RecvStatus::RECV_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(50);
+            Os::Task::delay(Fw::TimeInterval(0, 50000));
             continue;
         }
 
@@ -389,21 +385,19 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     }
 }
 
-void LinuxUartDriver ::startReadThread(NATIVE_UINT_TYPE priority,
-                                       NATIVE_UINT_TYPE stackSize,
-                                       NATIVE_UINT_TYPE cpuAffinity) {
+void LinuxUartDriver ::start(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
     Os::TaskString task("SerReader");
-    Os::Task::TaskStatus stat =
-        this->m_readTask.start(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
-    FW_ASSERT(stat == Os::Task::TASK_OK, stat);
+    Os::Task::Arguments arguments(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
+    Os::Task::Status stat = this->m_readTask.start(arguments);
+    FW_ASSERT(stat == Os::Task::OP_OK, stat);
 }
 
 void LinuxUartDriver ::quitReadThread() {
     this->m_quitReadThread = true;
 }
 
-Os::Task::TaskStatus LinuxUartDriver ::join(void** value_ptr) {
-    return m_readTask.join(value_ptr);
+Os::Task::Status LinuxUartDriver ::join() {
+    return m_readTask.join();
 }
 
 }  // end namespace Drv
